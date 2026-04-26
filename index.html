@@ -1,0 +1,2940 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_76d1495276e05fec6c668e692234e9ee {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.fullscreen@3.0.0/Control.FullScreen.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/ardhi/Leaflet.MousePosition/src/L.Control.MousePosition.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ardhi/Leaflet.MousePosition/src/L.Control.MousePosition.min.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/ljagis/leaflet-measure@2.1.7/dist/leaflet-measure.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ljagis/leaflet-measure@2.1.7/dist/leaflet-measure.min.css"/>
+</head>
+<body>
+    
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    map_76d1495276e05fec6c668e692234e9ee.on('popupopen', function(e) {
+        if(window.makePopupDraggable) window.makePopupDraggable(e);
+    });
+});
+</script>
+    
+<script>
+window.makePopupDraggable = function(e) {
+    let popupContainer = e.popup._container;
+    // 移除 dataset.draggable 檢查以解決關閉後重開無法拖曳的 Bug
+    let header = popupContainer.querySelector('.drag-header');
+    if (!header) return;
+    
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    header.onmousedown = function(ev) {
+        ev = ev || window.event;
+        ev.preventDefault();
+        pos3 = ev.clientX;
+        pos4 = ev.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    };
+    function elementDrag(ev) {
+        ev = ev || window.event;
+        ev.preventDefault();
+        pos1 = pos3 - ev.clientX;
+        pos2 = pos4 - ev.clientY;
+        pos3 = ev.clientX;
+        pos4 = ev.clientY;
+        let mb = parseInt(window.getComputedStyle(popupContainer).marginBottom || 0);
+        let ml = parseInt(window.getComputedStyle(popupContainer).marginLeft || 0);
+        popupContainer.style.marginBottom = (mb + pos2) + "px";
+        popupContainer.style.marginLeft = (ml - pos1) + "px";
+    }
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+};
+document.addEventListener('DOMContentLoaded', function() {
+    const urls = [
+        "https://data.moenv.gov.tw/api/v2/aqx_p_138?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_139?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_140?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_141?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_142?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_146?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_147?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_149?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_150?api_key=c26e8777-0479-4287-aa2f-054299ae4a25"
+    ];
+
+    let moenvData = {};
+    let env_pts = {"\u6c99\u9e7f": [24.225628, 120.568794], "\u897f\u5c6f": [24.162197, 120.616917], "\u5fe0\u660e": [24.151958, 120.641092], "\u6960\u6893": [22.733667, 120.328289], "\u5de6\u71df": [22.674861, 120.292917], "\u4ec1\u6b66": [22.689056, 120.332631], "\u9f8d\u6f6d": [24.86400048, 121.21645772], "\u65b0\u7af9": [24.8056356, 120.97236752], "\u7af9\u6771": [24.74091408, 121.08895493], "\u982d\u4efd": [24.69690679, 120.89869286], "\u6734\u5b50": [23.46538, 120.2478], "\u5609\u7fa9": [23.46477865, 120.44125148], "\u65b0\u6e2f": [23.554839, 120.345531], "\u5584\u5316": [23.11337642, 120.29740529], "\u5b89\u5357": [23.048197, 120.2175]};
+
+    function formatLST(dt_str) {
+        if (!dt_str || dt_str === "N/A") return "N/A";
+        // API returns "YYYY-MM-DD HH:MM" in LST directly. Just append seconds.
+        return dt_str + ":00";
+    }
+
+    Promise.all(urls.map(url => fetch(url).then(res => res.json()).catch(e => null)))
+        .then(results => {
+            results.forEach(data => {
+                if (!data) return;
+                const records = Array.isArray(data) ? data : (data.records || []);
+                records.forEach(record => {
+                    const st = record.sitename;
+                    if (!moenvData[st]) moenvData[st] = {};
+                    
+                    const param = record.itemengname;
+                    let pName = param;
+                    if (param === 'WIND_DIREC') pName = 'WindDirec';
+                    if (param === 'WIND_SPEED') pName = 'WindSpeed';
+                    if (param === 'AM_TEMP') pName = 'Temp';
+                    if (param === 'RH') pName = 'Humid';
+                    
+                    let recordTime = record.monitordate || "";
+                    let currentParamTime = moenvData[st][pName + "_time"] || "";
+                    
+                    // Keep only the latest data for each metric
+                    if (!currentParamTime || recordTime >= currentParamTime) {
+                        moenvData[st][pName] = record.concentration;
+                        moenvData[st][pName + "_time"] = recordTime;
+                        
+                        // Update the overall station update_time to the maximum monitor date
+                        let currentStTime = moenvData[st]['update_time'] || "";
+                        if (!currentStTime || recordTime >= currentStTime) {
+                            moenvData[st]['update_time'] = recordTime;
+                        }
+                    }
+                });
+            });
+
+            let layerGroup = feature_group_6d6d9f21228bec315dcc1b5f3d9d4228;
+            Object.keys(env_pts).forEach(function(base_name) {
+                let clean_name = base_name.replace("站", "");
+                let st_info = moenvData[clean_name] || {};
+                
+                let pm10 = st_info["PM10"] || "N/A";
+                let pm25 = st_info["PM2.5"] || "N/A";
+                let no2 = st_info["NO2"] || "N/A";
+                let so2 = st_info["SO2"] || "N/A";
+                let o3 = st_info["O3"] || "N/A";
+                let co = st_info["CO"] || "N/A";
+                let wd = st_info["WindDirec"] || "N/A";
+                let ws = st_info["WindSpeed"] || "N/A";
+                let temp = st_info["Temp"] || "N/A";
+                let humid = st_info["Humid"] || "N/A";
+                let dt_str = formatLST(st_info["update_time"]);
+                
+                let metrics = [
+                    {val: pm10, label: 'PM10', unit: 'μg/m³'},
+                    {val: pm25, label: 'PM2.5', unit: 'μg/m³'},
+                    {val: no2, label: 'NO2', unit: 'ppb'},
+                    {val: so2, label: 'SO2', unit: 'ppb'},
+                    {val: o3, label: 'O3', unit: 'ppb'},
+                    {val: co, label: 'CO', unit: 'ppm'},
+                    {val: temp, label: '溫度', unit: '°C'},
+                    {val: humid, label: '濕度', unit: '%'},
+                    {val: wd, label: '風向', unit: '°'},
+                    {val: ws, label: '風速', unit: 'm/s'}
+                ];
+                let rowsHtml = "";
+                metrics.forEach(m => {
+                    if (m.val && m.val !== "N/A") {
+                        rowsHtml += `<tr style='border-bottom: 1px solid #eee;'><td style='color: #666; padding: 2px 0;'>${m.label}</td><td style='text-align: right;'><b>${m.val}</b> <span style='font-size: 10px; color: #888;'>${m.unit}</span></td></tr>`;
+                    }
+                });
+
+                let tooltip_html = `<div style='font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; width: 170px; background-color: transparent;'>
+                    <div class='drag-header' style='cursor: move; font-size: 14px; font-weight: bold; color: #333; margin-bottom: 5px; border-bottom: 2px solid #3498db; padding-bottom: 3px;'>
+                        📍 ${base_name} <span style='font-size:10px;color:#666;'>(環境部)</span>
+                    </div>
+                    <table style='width: 100%; border-collapse: collapse;'>
+                        ${rowsHtml}
+                    </table>
+                    <div style='margin-top: 6px; font-size: 10px; color: #999; text-align: center;'>
+                        🕒 擷取時間: ${dt_str}
+                    </div>
+                </div>`;
+
+                let marker = L.marker(env_pts[base_name], {
+                    icon: L.AwesomeMarkers.icon({icon: 'star', markerColor: 'blue', prefix: 'fa', extraClasses: 'fa-rotate-0'})
+                });
+                
+                marker.bindPopup(tooltip_html, {maxWidth: 220, autoClose: false, closeOnClick: false, className: 'draggable-popup'});
+                marker.on('popupopen', window.makePopupDraggable);
+                marker.addTo(layerGroup);
+            });
+        })
+        .catch(err => console.error("Error fetching MOENV APIs:", err));
+});
+</script>
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const indUrls = [
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=1000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=2000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=3000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=4000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=5000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=6000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=7000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=8000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=9000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=10000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=11000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25",
+        "https://data.moenv.gov.tw/api/v2/aqx_p_268?offset=12000&api_key=c26e8777-0479-4287-aa2f-054299ae4a25"
+    ];
+
+    let targetIndPts = {"\u967d\u660e\u570b\u5c0f": [24.22139, 120.63194], "\u570b\u5b89\u570b\u5c0f": [24.19361, 120.60861], "\u90fd\u6703\u516c\u5712": [24.21111, 120.59833], "\u4e2d\u79d1\u5be6\u4e2d": [24.22944, 120.62583], "\u65b0\u5b89": [24.784714, 120.991939], "\u975c\u5fc3\u6e56": [24.778281, 121.013773], "\u529b\u884c": [24.76637, 121.016265], "\u8208\u696d": [24.77806, 120.989786], "\u7af9\u5357\u6771": [24.70966, 120.92154], "\u7af9\u5357\u897f": [24.71361, 120.91031], "\u7af9\u5357\u5357": [24.70611, 120.91282], "\u7af9\u5357\u5317": [24.70817, 120.89529], "\u5609\u7fa9\u7e23\u6771\u77f3": [23.46248333, 120.172425], "\u516c13": [23.09003889, 120.2845694], "\u516c19": [23.12582, 120.26943], "\u516c29": [23.10635, 120.2692611], "\u5357\u79d1\u5be6\u4e2d": [23.10739722, 120.2912611], "\u6cb9\u5ee0\u570b\u5c0f": [22.709434, 120.303392], "\u534a\u5c4f\u5c71\u52a0\u58d3\u7ad9": [22.695393, 120.301884], "\u5712\u5340\u6771\u5357\u7ad9": [22.703263, 120.32075], "\u5712\u5340\u5317\u7ad9": [22.712882, 120.313685]};
+    let indData = {};
+
+    Promise.all(indUrls.map(url => fetch(url).then(r => r.json()).catch(e => null)))
+        .then(results => {
+            results.forEach(data => {
+                if (!data) return;
+                const records = Array.isArray(data) ? data : (data.records || []);
+                records.forEach(record => {
+                    const st = record.dp_no || record.sitename || record.stname || "";
+                    if (!st.includes("陽明") && !st.includes("國安") && !st.includes("都會") && !st.includes("實中") &&
+                        !st.includes("新安") && !st.includes("靜心") && !st.includes("力行") && !st.includes("興業") &&
+                        !st.includes("南東") && !st.includes("南西") && !st.includes("南南") && !st.includes("南北") &&
+                        !st.includes("東石") && !st.includes("公13") && !st.includes("公19") && !st.includes("公29") &&
+                        !st.includes("油廠") && !st.includes("半屏山") && !st.includes("園區東南") && !st.includes("園區北")) return;
+                    
+                    let targetKey = "";
+                    if (st.includes("陽明")) targetKey = "陽明國小";
+                    else if (st.includes("國安")) targetKey = "國安國小";
+                    else if (st.includes("都會") || st.includes("公園")) targetKey = "都會公園";
+                    else if (st.includes("新安")) targetKey = "新安";
+                    else if (st.includes("靜心")) targetKey = "靜心湖";
+                    else if (st.includes("力行")) targetKey = "力行";
+                    else if (st.includes("興業")) targetKey = "興業";
+                    else if (st.includes("南東")) targetKey = "竹南東";
+                    else if (st.includes("南西")) targetKey = "竹南西";
+                    else if (st.includes("南南")) targetKey = "竹南南";
+                    else if (st.includes("南北")) targetKey = "竹南北";
+                    else if (st.includes("東石")) targetKey = "嘉義縣東石";
+                    else if (st.includes("公13")) targetKey = "公13";
+                    else if (st.includes("公19")) targetKey = "公19";
+                    else if (st.includes("公29")) targetKey = "公29";
+                    else if (st.includes("南科實中")) targetKey = "南科實中";
+                    else if (st.includes("油廠")) targetKey = "油廠國小";
+                    else if (st.includes("半屏山")) targetKey = "半屏山加壓站";
+                    else if (st.includes("園區東南")) targetKey = "園區東南站";
+                    else if (st.includes("園區北")) targetKey = "園區北站";
+                    else if (st.includes("實中")) targetKey = "中科實中";
+                    
+                    if (!targetKey) return;
+                    if (!indData[targetKey]) indData[targetKey] = {};
+                    
+                    let pName = (record.desp || record.itemengname || record.itemname || "").toLowerCase();
+                    let param = "";
+                    if (pName.includes("pm10") || (pName.includes("懸浮微粒") && !pName.includes("2.5") && !pName.includes("細"))) param = "PM10";
+                    else if (pName.includes("pm2.5") || pName.includes("細") || pName.includes("細懸浮微粒")) param = "PM2.5";
+                    else if (pName.includes("no2") || pName.includes("二氧化氮")) param = "NO2";
+                    else if (pName.includes("so2") || pName.includes("二氧化硫")) param = "SO2";
+                    else if (pName.includes("o3") || pName.includes("臭氧")) param = "O3";
+                    else if (pName.includes("co") || pName.includes("一氧化碳")) param = "CO";
+                    else if (pName.includes("風向") || pName.includes("direc")) param = "WindDirec";
+                    else if (pName.includes("風速") || pName.includes("speed")) param = "WindSpeed";
+                    else if (pName.includes("溫度") || pName.includes("temp") || pName === "am_temp") param = "Temp";
+                    else if (pName.includes("濕度") || pName.includes("rh") || pName.includes("humid")) param = "Humid";
+                    
+                    if (!param) return;
+                    
+                    let m_date = record.m_date || record.monitordate || "";
+                    let m_time = record.m_time || "";
+                    let formattedTime = "";
+                    if (m_date && m_time && m_time.length === 6) {
+                        formattedTime = `${m_date} ${m_time.substring(0,2)}:00:00`;
+                    } else if (m_date && m_date.includes(":")) {
+                        formattedTime = m_date;
+                    }
+                    
+                    let currentParamTime = indData[targetKey][param + "_time"] || "";
+                    if (!currentParamTime || formattedTime >= currentParamTime) {
+                        indData[targetKey][param] = record.value || record.concentration;
+                        indData[targetKey][param + "_time"] = formattedTime;
+                        
+                        let currentStTime = indData[targetKey]['update_time'] || "";
+                        if (!currentStTime || formattedTime >= currentStTime) {
+                             indData[targetKey]['update_time'] = formattedTime;
+                        }
+                    }
+                });
+            });
+            
+            let layerGroup = feature_group_4c6125c311d1d6698546c0919cc27f5b;
+            Object.keys(targetIndPts).forEach(function(base_name) {
+                let st_info = indData[base_name] || {};
+                
+                let pm10 = st_info["PM10"] || "N/A";
+                let pm25 = st_info["PM2.5"] || "N/A";
+                let no2 = st_info["NO2"] || "N/A";
+                let so2 = st_info["SO2"] || "N/A";
+                let o3 = st_info["O3"] || "N/A";
+                let co = st_info["CO"] || "N/A";
+                let wd = st_info["WindDirec"] || "N/A";
+                let ws = st_info["WindSpeed"] || "N/A";
+                let temp = st_info["Temp"] || "N/A";
+                let humid = st_info["Humid"] || "N/A";
+                let dt_str = st_info["update_time"] || "N/A";
+                
+                let metrics = [
+                    {val: pm10, label: 'PM10', unit: 'μg/m³'},
+                    {val: pm25, label: 'PM2.5', unit: 'μg/m³'},
+                    {val: no2, label: 'NO2', unit: 'ppb'},
+                    {val: so2, label: 'SO2', unit: 'ppb'},
+                    {val: o3, label: 'O3', unit: 'ppb'},
+                    {val: co, label: 'CO', unit: 'ppm'},
+                    {val: temp, label: '溫度', unit: '°C'},
+                    {val: humid, label: '濕度', unit: '%'},
+                    {val: wd, label: '風向', unit: '°'},
+                    {val: ws, label: '風速', unit: 'm/s'}
+                ];
+                let rowsHtml = "";
+                metrics.forEach(m => {
+                    if (m.val && m.val !== "N/A") {
+                        rowsHtml += `<tr style='border-bottom: 1px solid #eee;'><td style='color: #666; padding: 2px 0;'>${m.label}</td><td style='text-align: right;'><b>${m.val}</b> <span style='font-size: 10px; color: #888;'>${m.unit}</span></td></tr>`;
+                    }
+                });
+                
+                let tooltip_html = `<div style='font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; width: 170px; background-color: transparent;'>
+                    <div class='drag-header' style='cursor: move; font-size: 14px; font-weight: bold; color: #333; margin-bottom: 5px; border-bottom: 2px solid #27ae60; padding-bottom: 3px;'>
+                        📍 ${base_name} <span style='font-size:10px;color:#666;'>(特殊工業區)</span>
+                    </div>
+                    <table style='width: 100%; border-collapse: collapse;'>
+                        ${rowsHtml}
+                    </table>
+                    <div style='margin-top: 6px; font-size: 10px; color: #999; text-align: center;'>
+                        🕒 擷取時間: ${dt_str}
+                    </div>
+                </div>`;
+
+                let marker = L.marker(targetIndPts[base_name], {
+                    icon: L.AwesomeMarkers.icon({icon: 'caret-up', markerColor: 'green', prefix: 'fa', extraClasses: 'fa-rotate-0'})
+                });
+                
+                marker.bindPopup(tooltip_html, {maxWidth: 220, autoClose: false, closeOnClick: false, className: 'draggable-popup'});
+                marker.on('popupopen', window.makePopupDraggable);
+                marker.addTo(layerGroup);
+            });
+        })
+        .catch(err => console.error("Error fetching Industrial APIs:", err));
+});
+</script>
+    
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let cwaPts = {"\u5927\u96c5(\u81ea\u52d5)": [24.2153, 120.6244], "\u9ad8\u96c4(\u4eba\u5de5)": [22.7304, 120.3125], "\u9f8d\u6f6d(\u81ea\u52d5)": [24.889177, 121.201821], "\u65b0\u7af9\u5e02\u6771\u5340(\u81ea\u52d5)": [24.7987, 120.9869], "\u5bf6\u5c71(\u81ea\u52d5)": [24.735, 121.0252], "\u7af9\u6771(\u81ea\u52d5)": [24.7671, 121.0579], "\u982d\u4efd(\u81ea\u52d5)": [24.6882, 120.9122], "\u9f8d\u9cf3(\u81ea\u52d5)": [24.7, 120.8591], "\u516d\u8173(\u81ea\u52d5)": [23.4929, 120.2906], "\u8526\u677e(\u81ea\u52d5)": [23.5143, 120.2297], "\u5584\u5316(\u81ea\u52d5)": [23.1129, 120.2972], "\u5b89\u5b9a(\u81ea\u52d5)": [23.1026, 120.2276]};
+    let cwaIds = {"\u5927\u96c5(\u81ea\u52d5)": "C0F9X0", "\u9ad8\u96c4(\u4eba\u5de5)": "467441", "\u9f8d\u6f6d(\u81ea\u52d5)": "C0C670", "\u65b0\u7af9\u5e02\u6771\u5340(\u81ea\u52d5)": "C0D660", "\u5bf6\u5c71(\u81ea\u52d5)": "C0D580", "\u7af9\u6771(\u81ea\u52d5)": "C0D560", "\u982d\u4efd(\u81ea\u52d5)": "C0E730", "\u9f8d\u9cf3(\u81ea\u52d5)": "C0E930", "\u516d\u8173(\u81ea\u52d5)": "C0M740", "\u8526\u677e(\u81ea\u52d5)": "C0K550", "\u5584\u5316(\u81ea\u52d5)": "C0O900", "\u5b89\u5b9a(\u81ea\u52d5)": "C0X150"};
+    let layerGroup = feature_group_82f4f351191d425f56c2f2a1a6563a9f;
+    
+    // Create base markers immediately
+    let cwaMarkers = {};
+    Object.keys(cwaPts).forEach(function(st_name) {
+        let marker = L.marker(cwaPts[st_name], {
+            icon: L.AwesomeMarkers.icon({icon: 'cloud', markerColor: 'orange', prefix: 'fa', extraClasses: 'fa-rotate-0'})
+        });
+        let tooltip_html = `<div style='font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; width: 170px; background-color: transparent;'>
+            <div class='drag-header' style='cursor: move; font-size: 14px; font-weight: bold; color: #333; margin-bottom: 5px; border-bottom: 2px solid #e67e22; padding-bottom: 3px;'>
+                📍 ${st_name} <span style='font-size:10px;color:#666;'>(氣象署)</span>
+            </div>
+            <div style='color: #666; text-align: center; padding: 10px 0;'>資料載入中...</div>
+        </div>`;
+        marker.bindPopup(tooltip_html, {maxWidth: 220, autoClose: false, closeOnClick: false, className: 'draggable-popup'});
+        marker.on('popupopen', window.makePopupDraggable);
+        marker.addTo(layerGroup);
+        cwaMarkers[st_name] = marker;
+    });
+
+    // Fetch data and update popups
+    Object.keys(cwaIds).forEach(function(st_name) {
+        let st_id = cwaIds[st_name];
+        let url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0001-001?Authorization=CWB-9AD49122-F413-4BBE-A134-2AB8AB8B7690&StationId=${st_id}`;
+        
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.records && data.records.Station && data.records.Station.length > 0) {
+                    let st = data.records.Station[0];
+                    let we = st.WeatherElement || {};
+                    let obsTime = st.ObsTime ? st.ObsTime.DateTime : "N/A";
+                    
+                    let dt_str = obsTime;
+                    if (dt_str.includes('+')) dt_str = dt_str.split('+')[0];
+                    dt_str = dt_str.replace("T", " ");
+
+                    let wd = ("WindDirection" in we && we.WindDirection !== "-99" && we.WindDirection !== "-99.0") ? we.WindDirection : "N/A";
+                    let ws = ("WindSpeed" in we && we.WindSpeed !== "-99" && we.WindSpeed !== "-99.0") ? we.WindSpeed : "N/A";
+                    let temp = ("AirTemperature" in we && we.AirTemperature !== "-99" && we.AirTemperature !== "-99.0") ? we.AirTemperature : "N/A";
+                    let humid = ("RelativeHumidity" in we && we.RelativeHumidity !== "-99" && we.RelativeHumidity !== "-99.0") ? we.RelativeHumidity : "N/A";
+                    
+                    let metrics = [
+                        {val: temp, label: '溫度', unit: '°C'},
+                        {val: humid, label: '濕度', unit: '%'},
+                        {val: wd, label: '風向', unit: '°'},
+                        {val: ws, label: '風速', unit: 'm/s'}
+                    ];
+                    let rowsHtml = "";
+                    metrics.forEach(m => {
+                        if (m.val && m.val !== "N/A") {
+                            rowsHtml += `<tr style='border-bottom: 1px solid #eee;'><td style='color: #666; padding: 2px 0;'>${m.label}</td><td style='text-align: right;'><b>${m.val}</b> <span style='font-size: 10px; color: #888;'>${m.unit}</span></td></tr>`;
+                        }
+                    });
+                    
+                    let tooltip_html = `<div style='font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; width: 170px; background-color: transparent;'>
+                        <div class='drag-header' style='cursor: move; font-size: 14px; font-weight: bold; color: #333; margin-bottom: 5px; border-bottom: 2px solid #e67e22; padding-bottom: 3px;'>
+                            📍 ${st_name} <span style='font-size:10px;color:#666;'>(氣象署)</span>
+                        </div>
+                        <table style='width: 100%; border-collapse: collapse;'>
+                            ${rowsHtml}
+                        </table>
+                        <div style='margin-top: 6px; font-size: 10px; color: #999; text-align: center;'>
+                            🕒 擷取時間: ${dt_str}
+                        </div>
+                    </div>`;
+                    
+                    if (cwaMarkers[st_name]) {
+                        let popup = cwaMarkers[st_name].getPopup();
+                        if(popup) popup.setContent(tooltip_html);
+                        cwaMarkers[st_name].bindPopup(tooltip_html, {maxWidth: 220, autoClose: false, closeOnClick: false, className: 'draggable-popup'});
+                    }
+                }
+            })
+            .catch(err => console.error("Error fetching CWA API:", err));
+    });
+});
+</script>
+    
+            <div class="folium-map" id="map_76d1495276e05fec6c668e692234e9ee" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_76d1495276e05fec6c668e692234e9ee = L.map(
+                "map_76d1495276e05fec6c668e692234e9ee",
+                {
+                    center: [24.205, 120.61],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_76d1495276e05fec6c668e692234e9ee);
+
+            
+
+        
+    
+            var tile_layer_90a66b9145b7910e10bb48db0e81162d = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_90a66b9145b7910e10bb48db0e81162d.addTo(map_76d1495276e05fec6c668e692234e9ee);
+        
+    
+            var tile_layer_b87155b06ac59e04d387126ec466a9f2 = L.tileLayer(
+                "https://mt1.google.com/vt/lyrs=s\u0026x={x}\u0026y={y}\u0026z={z}",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "Google",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_b87155b06ac59e04d387126ec466a9f2.addTo(map_76d1495276e05fec6c668e692234e9ee);
+        
+    
+            var feature_group_ffe410c724b546400fc31f73584ccdf5 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var polygon_6cf1ba9acf379fa84a4aeb53b8151f5e = L.polygon(
+                [[24.210748, 120.613622], [24.212753, 120.614386], [24.212835, 120.614151], [24.213276, 120.614314], [24.21337, 120.614092], [24.213669, 120.614195], [24.213693, 120.614135], [24.214217, 120.614355], [24.214181, 120.614447], [24.214289, 120.614508], [24.214259, 120.614672], [24.214715, 120.614855], [24.213774, 120.617844], [24.211415, 120.616943], [24.210194, 120.616207], [24.210371, 120.615796], [24.210087, 120.615588]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_648223a1943ec14206fceb4f657d44a5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cab8ed68a33377d8e5a533eef925f074 = $(`<div id="html_cab8ed68a33377d8e5a533eef925f074" style="width: 100.0%; height: 100.0%;"><b>台積電 15A 廠</b></div>`)[0];
+                popup_648223a1943ec14206fceb4f657d44a5.setContent(html_cab8ed68a33377d8e5a533eef925f074);
+            
+        
+
+        polygon_6cf1ba9acf379fa84a4aeb53b8151f5e.bindPopup(popup_648223a1943ec14206fceb4f657d44a5)
+        ;
+
+        
+    
+    
+            polygon_6cf1ba9acf379fa84a4aeb53b8151f5e.bindTooltip(
+                `<div>
+                     台積電 15A 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_8ba848adb01020ab2a5c5ab65c40e9bc = L.polygon(
+                [[24.207266, 120.604354], [24.211896, 120.605976], [24.211193, 120.608122], [24.210209, 120.6078], [24.209502, 120.610195], [24.207666, 120.609473], [24.207899, 120.608511], [24.20725, 120.608247], [24.207655, 120.607025], [24.206988, 120.606751], [24.207289, 120.605672], [24.206855, 120.605507]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_ee2857b63d11b0f8025ab206a5bfae2d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a8357dcb367b0ab2a8c3c2a73f72eb22 = $(`<div id="html_a8357dcb367b0ab2a8c3c2a73f72eb22" style="width: 100.0%; height: 100.0%;"><b>台積電 15B 廠</b></div>`)[0];
+                popup_ee2857b63d11b0f8025ab206a5bfae2d.setContent(html_a8357dcb367b0ab2a8c3c2a73f72eb22);
+            
+        
+
+        polygon_8ba848adb01020ab2a5c5ab65c40e9bc.bindPopup(popup_ee2857b63d11b0f8025ab206a5bfae2d)
+        ;
+
+        
+    
+    
+            polygon_8ba848adb01020ab2a5c5ab65c40e9bc.bindTooltip(
+                `<div>
+                     台積電 15B 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_05b4a65b37799d944f9408f40c158b76 = L.polygon(
+                [[24.214941, 120.615113], [24.215863, 120.615447], [24.21575, 120.615847], [24.216071, 120.615973], [24.215202, 120.618677], [24.213999, 120.61823]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_064db693a60994d2b5257174172e2551 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1396d3fcd2110686ab88c6530e6ccc83 = $(`<div id="html_1396d3fcd2110686ab88c6530e6ccc83" style="width: 100.0%; height: 100.0%;"><b>台積電 AP5 廠</b></div>`)[0];
+                popup_064db693a60994d2b5257174172e2551.setContent(html_1396d3fcd2110686ab88c6530e6ccc83);
+            
+        
+
+        polygon_05b4a65b37799d944f9408f40c158b76.bindPopup(popup_064db693a60994d2b5257174172e2551)
+        ;
+
+        
+    
+    
+            polygon_05b4a65b37799d944f9408f40c158b76.bindTooltip(
+                `<div>
+                     台積電 AP5 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_829b8c6eb144e9b9c51c82cf2c155e8a = L.polygon(
+                [[24.217901, 120.618393], [24.218547, 120.617499], [24.218812, 120.617482], [24.218866, 120.617578], [24.218868, 120.618118], [24.219117, 120.618159], [24.219097, 120.620247], [24.21854, 120.6205], [24.217917, 120.620484], [24.217735, 120.620346]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_eed751991460703b80dff948828a6dbd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9ff5f915e9d97eaeb0fd0d8b36a2dcd4 = $(`<div id="html_9ff5f915e9d97eaeb0fd0d8b36a2dcd4" style="width: 100.0%; height: 100.0%;"><b>台中零廢製造中心</b></div>`)[0];
+                popup_eed751991460703b80dff948828a6dbd.setContent(html_9ff5f915e9d97eaeb0fd0d8b36a2dcd4);
+            
+        
+
+        polygon_829b8c6eb144e9b9c51c82cf2c155e8a.bindPopup(popup_eed751991460703b80dff948828a6dbd)
+        ;
+
+        
+    
+    
+            polygon_829b8c6eb144e9b9c51c82cf2c155e8a.bindTooltip(
+                `<div>
+                     台中零廢製造中心
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_1f14b9ec0f62fb52eece7a644076adb6 = L.polygon(
+                [[22.709036, 120.309586], [22.710023, 120.311178], [22.71044, 120.310996], [22.711394, 120.31252], [22.711269, 120.312668], [22.711647, 120.313366], [22.708753, 120.315414], [22.707774, 120.313353], [22.707393, 120.313551], [22.706121, 120.311368]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_c64c9d7c63f8345e644730b63dcbcb6c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ab5f3abd710df91626648affda55cdcd = $(`<div id="html_ab5f3abd710df91626648affda55cdcd" style="width: 100.0%; height: 100.0%;"><b>台積電 F22 廠</b></div>`)[0];
+                popup_c64c9d7c63f8345e644730b63dcbcb6c.setContent(html_ab5f3abd710df91626648affda55cdcd);
+            
+        
+
+        polygon_1f14b9ec0f62fb52eece7a644076adb6.bindPopup(popup_c64c9d7c63f8345e644730b63dcbcb6c)
+        ;
+
+        
+    
+    
+            polygon_1f14b9ec0f62fb52eece7a644076adb6.bindTooltip(
+                `<div>
+                     台積電 F22 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_8f508ad9b72ee575ea72f428bf4de725 = L.polygon(
+                [[24.884367, 121.184084], [24.88423, 121.186584], [24.882323, 121.186456], [24.882495, 121.183958]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_9f703890d48a13b4eb20e820655d8a88 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_bc56ce25589c273bb579fdbedf357596 = $(`<div id="html_bc56ce25589c273bb579fdbedf357596" style="width: 100.0%; height: 100.0%;"><b>台積電 AP3 廠</b></div>`)[0];
+                popup_9f703890d48a13b4eb20e820655d8a88.setContent(html_bc56ce25589c273bb579fdbedf357596);
+            
+        
+
+        polygon_8f508ad9b72ee575ea72f428bf4de725.bindPopup(popup_9f703890d48a13b4eb20e820655d8a88)
+        ;
+
+        
+    
+    
+            polygon_8f508ad9b72ee575ea72f428bf4de725.bindTooltip(
+                `<div>
+                     台積電 AP3 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_40ef3cbbaf797e3bb92f17ca384e100c = L.polygon(
+                [[24.70323, 120.908459], [24.703207, 120.906236], [24.709369, 120.906242], [24.709336, 120.908146]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_71f057268d39a9ab835317d92684a96c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0f58036270f1fe52f8dc8509e3951e24 = $(`<div id="html_0f58036270f1fe52f8dc8509e3951e24" style="width: 100.0%; height: 100.0%;"><b>台積電 AP6 廠</b></div>`)[0];
+                popup_71f057268d39a9ab835317d92684a96c.setContent(html_0f58036270f1fe52f8dc8509e3951e24);
+            
+        
+
+        polygon_40ef3cbbaf797e3bb92f17ca384e100c.bindPopup(popup_71f057268d39a9ab835317d92684a96c)
+        ;
+
+        
+    
+    
+            polygon_40ef3cbbaf797e3bb92f17ca384e100c.bindTooltip(
+                `<div>
+                     台積電 AP6 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_dca8fd1273b5791813c00a071c32a7e7 = L.polygon(
+                [[24.764687, 121.00186], [24.767499, 121.002788], [24.766183, 121.007464], [24.763308, 121.006402]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_09e8c7d8aa9d7a0f2c62bc6ab2122e7e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4207d637a256ff84c93d5365257f7348 = $(`<div id="html_4207d637a256ff84c93d5365257f7348" style="width: 100.0%; height: 100.0%;"><b>台積電 F20 廠</b></div>`)[0];
+                popup_09e8c7d8aa9d7a0f2c62bc6ab2122e7e.setContent(html_4207d637a256ff84c93d5365257f7348);
+            
+        
+
+        polygon_dca8fd1273b5791813c00a071c32a7e7.bindPopup(popup_09e8c7d8aa9d7a0f2c62bc6ab2122e7e)
+        ;
+
+        
+    
+    
+            polygon_dca8fd1273b5791813c00a071c32a7e7.bindTooltip(
+                `<div>
+                     台積電 F20 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_304a7ef94e9b5ff1b391480b77d13a59 = L.polygon(
+                [[24.773022, 121.010353], [24.774771, 121.012461], [24.772975, 121.014548], [24.771347, 121.012944]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_67b8a894b02372ada6e2430821d0ecf2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6da7006feb4c1c3200de192eb52c7ed3 = $(`<div id="html_6da7006feb4c1c3200de192eb52c7ed3" style="width: 100.0%; height: 100.0%;"><b>台積電 F12P1&2 廠</b></div>`)[0];
+                popup_67b8a894b02372ada6e2430821d0ecf2.setContent(html_6da7006feb4c1c3200de192eb52c7ed3);
+            
+        
+
+        polygon_304a7ef94e9b5ff1b391480b77d13a59.bindPopup(popup_67b8a894b02372ada6e2430821d0ecf2)
+        ;
+
+        
+    
+    
+            polygon_304a7ef94e9b5ff1b391480b77d13a59.bindTooltip(
+                `<div>
+                     台積電 F12P1&2 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_3adfbd95c903695538e622ea0c3150c7 = L.polygon(
+                [[24.769878, 121.010905], [24.771193, 121.012924], [24.770647, 121.013607], [24.769822, 121.014109], [24.767651, 121.011096], [24.76866, 121.010739]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_49874fedb5e425bfdbcc87e94c6236fa = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_55abaf65a47c7bd322bf6700c3af3d02 = $(`<div id="html_55abaf65a47c7bd322bf6700c3af3d02" style="width: 100.0%; height: 100.0%;"><b>台積電 F12P4&5 廠</b></div>`)[0];
+                popup_49874fedb5e425bfdbcc87e94c6236fa.setContent(html_55abaf65a47c7bd322bf6700c3af3d02);
+            
+        
+
+        polygon_3adfbd95c903695538e622ea0c3150c7.bindPopup(popup_49874fedb5e425bfdbcc87e94c6236fa)
+        ;
+
+        
+    
+    
+            polygon_3adfbd95c903695538e622ea0c3150c7.bindTooltip(
+                `<div>
+                     台積電 F12P4&5 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_84f088648cfea56284be1db464a9a019 = L.polygon(
+                [[24.771438, 121.009267], [24.772856, 121.010237], [24.771313, 121.012809], [24.770037, 121.010997], [24.770751, 121.010482]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_40790e95518e69187f8332e0cd67acb1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_dd2384585ce909f43d2bc9c66959f770 = $(`<div id="html_dd2384585ce909f43d2bc9c66959f770" style="width: 100.0%; height: 100.0%;"><b>台積電 F12P6 廠</b></div>`)[0];
+                popup_40790e95518e69187f8332e0cd67acb1.setContent(html_dd2384585ce909f43d2bc9c66959f770);
+            
+        
+
+        polygon_84f088648cfea56284be1db464a9a019.bindPopup(popup_40790e95518e69187f8332e0cd67acb1)
+        ;
+
+        
+    
+    
+            polygon_84f088648cfea56284be1db464a9a019.bindTooltip(
+                `<div>
+                     台積電 F12P6 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_7c76c594c8f69edce2a17fea83bbf6e8 = L.polygon(
+                [[24.767562, 121.011198], [24.769513, 121.01431], [24.767834, 121.015373], [24.766462, 121.013011], [24.766503, 121.012542], [24.766819, 121.011837]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_eb42a1f6927a3b855229ff51c9df6e72 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_72a32aad379a9cd59544ae138be1776f = $(`<div id="html_72a32aad379a9cd59544ae138be1776f" style="width: 100.0%; height: 100.0%;"><b>台積電 F12P7 廠</b></div>`)[0];
+                popup_eb42a1f6927a3b855229ff51c9df6e72.setContent(html_72a32aad379a9cd59544ae138be1776f);
+            
+        
+
+        polygon_7c76c594c8f69edce2a17fea83bbf6e8.bindPopup(popup_eb42a1f6927a3b855229ff51c9df6e72)
+        ;
+
+        
+    
+    
+            polygon_7c76c594c8f69edce2a17fea83bbf6e8.bindTooltip(
+                `<div>
+                     台積電 F12P7 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_c6a972a68f7350b0e25fe234d1d04170 = L.polygon(
+                [[24.770349, 121.008625], [24.770309, 121.010572], [24.769786, 121.010746], [24.76836, 121.010563], [24.767955, 121.010715], [24.766788, 121.011694], [24.766861, 121.008381], [24.768116, 121.008181], [24.768328, 121.00816], [24.76958, 121.008297]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_f35a3a1dc465334b1f11e4a87d80596a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4f89d7a99d8bb758d9149ebf8911e60c = $(`<div id="html_4f89d7a99d8bb758d9149ebf8911e60c" style="width: 100.0%; height: 100.0%;"><b>台積電 F12P8 廠</b></div>`)[0];
+                popup_f35a3a1dc465334b1f11e4a87d80596a.setContent(html_4f89d7a99d8bb758d9149ebf8911e60c);
+            
+        
+
+        polygon_c6a972a68f7350b0e25fe234d1d04170.bindPopup(popup_f35a3a1dc465334b1f11e4a87d80596a)
+        ;
+
+        
+    
+    
+            polygon_c6a972a68f7350b0e25fe234d1d04170.bindTooltip(
+                `<div>
+                     台積電 F12P8 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_b628f7f99aad29bbf47c303c50ebef66 = L.polygon(
+                [[23.117909, 120.261374], [23.12114, 120.259796], [23.122033, 120.261913], [23.118956, 120.263582]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_a2e32813ae7c2226db2a6c45892bff77 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_280de1949870ce1c5023c57ba2006267 = $(`<div id="html_280de1949870ce1c5023c57ba2006267" style="width: 100.0%; height: 100.0%;"><b>台積電 F18P1 廠</b></div>`)[0];
+                popup_a2e32813ae7c2226db2a6c45892bff77.setContent(html_280de1949870ce1c5023c57ba2006267);
+            
+        
+
+        polygon_b628f7f99aad29bbf47c303c50ebef66.bindPopup(popup_a2e32813ae7c2226db2a6c45892bff77)
+        ;
+
+        
+    
+    
+            polygon_b628f7f99aad29bbf47c303c50ebef66.bindTooltip(
+                `<div>
+                     台積電 F18P1 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_b6be42985206b2d95518d0a54b925b6d = L.polygon(
+                [[23.117805, 120.257763], [23.119772, 120.256815], [23.121056, 120.259705], [23.119123, 120.260661]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_6aeb03b5053777d6a987e77ace93dfd0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0139b5f6c7b2f6af602d644fabb22ed6 = $(`<div id="html_0139b5f6c7b2f6af602d644fabb22ed6" style="width: 100.0%; height: 100.0%;"><b>台積電 F18P2 廠</b></div>`)[0];
+                popup_6aeb03b5053777d6a987e77ace93dfd0.setContent(html_0139b5f6c7b2f6af602d644fabb22ed6);
+            
+        
+
+        polygon_b6be42985206b2d95518d0a54b925b6d.bindPopup(popup_6aeb03b5053777d6a987e77ace93dfd0)
+        ;
+
+        
+    
+    
+            polygon_b6be42985206b2d95518d0a54b925b6d.bindTooltip(
+                `<div>
+                     台積電 F18P2 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_2f4f5fc3824e36f54bfd8757411bb2f0 = L.polygon(
+                [[23.118892, 120.263711], [23.120678, 120.267745], [23.118201, 120.267531], [23.117833, 120.267303], [23.116813, 120.264822]],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.4, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_ffe410c724b546400fc31f73584ccdf5);
+        
+    
+        var popup_659adb3572629ca8530cc7af3887f15a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d3f03bc47254d682376e43e7f2c4d2c9 = $(`<div id="html_d3f03bc47254d682376e43e7f2c4d2c9" style="width: 100.0%; height: 100.0%;"><b>台積電 F18P7 廠</b></div>`)[0];
+                popup_659adb3572629ca8530cc7af3887f15a.setContent(html_d3f03bc47254d682376e43e7f2c4d2c9);
+            
+        
+
+        polygon_2f4f5fc3824e36f54bfd8757411bb2f0.bindPopup(popup_659adb3572629ca8530cc7af3887f15a)
+        ;
+
+        
+    
+    
+            polygon_2f4f5fc3824e36f54bfd8757411bb2f0.bindTooltip(
+                `<div>
+                     台積電 F18P7 廠
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_ffe410c724b546400fc31f73584ccdf5.addTo(map_76d1495276e05fec6c668e692234e9ee);
+        
+    
+            var feature_group_c5b03106a3de03180a7e47930ab79afc = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var polygon_af520563584f323c042fc8b3d527792a = L.polygon(
+                [[24.215043, 120.62186], [24.213529, 120.620978], [24.213529, 120.620978], [24.210914, 120.619787], [24.210804, 120.61965], [24.211545, 120.617679], [24.214813, 120.619084], [24.216012, 120.619865]],
+                {"bubblingMouseEvents": true, "color": "lightblue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "lightblue", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+        var popup_3b2126c95920a86587ae8bcaeec7f8ab = L.popup({
+  "maxWidth": 300,
+  "className": "draggable-popup",
+  "autoClose": false,
+  "closeOnClick": false,
+});
+
+        
+            
+                var html_f2ca9ae6e59c9625bd1fc6c9205d3e60 = $(`<div id="html_f2ca9ae6e59c9625bd1fc6c9205d3e60" style="width: 100.0%; height: 100.0%;">     <div style="font-family: Arial, sans-serif; font-size: 14px; width: 250px; background-color: transparent;">         <div class='drag-header' style='cursor: move; margin-bottom: 5px; border-bottom: 2px solid #3498db; padding-bottom: 3px;'>             <h4 style="margin: 0; color: #333;">📍 華邦電子股份有限公司(中科) <span style='font-size:10px;color:#666;'>(廠區)</span></h4>         </div>         <b>列管煙道數量:</b> <span style="color: #c0392b;">38</span><br>         <b>原料與排放化學物質:</b>         <div style="margin-top: 5px; font-size: 13px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 4px; word-wrap: break-word;">             一氧化碳、三氟化硼、乙酸丁酯、二氧化硫、二甲基甲醯胺、吡啶、四氯化鈦、揮發性有機物、氟、氨、氫氟酸、氮氧化物、氯、氯化氫、硝酸、硫化羰、硫氧化物、硫酸、磷化氫、磷酸、粒狀汙染物         </div>     </div>     </div>`)[0];
+                popup_3b2126c95920a86587ae8bcaeec7f8ab.setContent(html_f2ca9ae6e59c9625bd1fc6c9205d3e60);
+            
+        
+
+        polygon_af520563584f323c042fc8b3d527792a.bindPopup(popup_3b2126c95920a86587ae8bcaeec7f8ab)
+        ;
+
+        
+    
+    
+            polygon_af520563584f323c042fc8b3d527792a.bindTooltip(
+                `<div>
+                     華邦電子股份有限公司(中科)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8360b095d1e891150180732201aa442b = L.circleMarker(
+                [24.21208, 120.61865999999999],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_8360b095d1e891150180732201aa442b.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P001<br>
+                            <b>經度:</b> 120.61866<br>
+                            <b>緯度:</b> 24.21208<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_17687836b7332aea4086a843c2954fd4 = L.circleMarker(
+                [24.21208, 120.61869],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_17687836b7332aea4086a843c2954fd4.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P002<br>
+                            <b>經度:</b> 120.61869<br>
+                            <b>緯度:</b> 24.21208<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_801d9c6124bd2c20c780a4f9a6d441c8 = L.circleMarker(
+                [24.21224, 120.61872],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_801d9c6124bd2c20c780a4f9a6d441c8.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P003<br>
+                            <b>經度:</b> 120.61872<br>
+                            <b>緯度:</b> 24.21224<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d9bc907498b3a71de0db71671519063c = L.circleMarker(
+                [24.212320000000002, 120.61874999999999],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_d9bc907498b3a71de0db71671519063c.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P004<br>
+                            <b>經度:</b> 120.61875<br>
+                            <b>緯度:</b> 24.21232<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4ae5e2ffecd746944e0057470dfd0859 = L.circleMarker(
+                [24.212400000000002, 120.61878],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_4ae5e2ffecd746944e0057470dfd0859.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P005<br>
+                            <b>經度:</b> 120.61878<br>
+                            <b>緯度:</b> 24.21240<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5f9b7c305a403bb58ba84eadc4c66199 = L.circleMarker(
+                [24.212480000000003, 120.6188],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_5f9b7c305a403bb58ba84eadc4c66199.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P006<br>
+                            <b>經度:</b> 120.61880<br>
+                            <b>緯度:</b> 24.21248<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_4df1c7a6bf9afa3e286b8377187f5e5c = L.circleMarker(
+                [24.21265, 120.61887999999999],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_4df1c7a6bf9afa3e286b8377187f5e5c.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P007<br>
+                            <b>經度:</b> 120.61888<br>
+                            <b>緯度:</b> 24.21265<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_79f8d902616f9450296a49524a730c22 = L.circleMarker(
+                [24.21274, 120.61892],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_79f8d902616f9450296a49524a730c22.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P008<br>
+                            <b>經度:</b> 120.61892<br>
+                            <b>緯度:</b> 24.21274<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_bf26dbcdf00bd711fb4e2d4ec6cffd09 = L.circleMarker(
+                [24.21283, 120.61896],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_bf26dbcdf00bd711fb4e2d4ec6cffd09.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P009<br>
+                            <b>經度:</b> 120.61896<br>
+                            <b>緯度:</b> 24.21283<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_c31a2630b2d95159f6f5515c2b23cf54 = L.circleMarker(
+                [24.21292, 120.61901],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_c31a2630b2d95159f6f5515c2b23cf54.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P010<br>
+                            <b>經度:</b> 120.61901<br>
+                            <b>緯度:</b> 24.21292<br>
+                            <b>高度:</b> 34.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、揮發性有機物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1c2574ec2cfa378ec40a2037021f39c3 = L.circleMarker(
+                [24.21301, 120.61905],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_1c2574ec2cfa378ec40a2037021f39c3.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P011<br>
+                            <b>經度:</b> 120.61905<br>
+                            <b>緯度:</b> 24.21301<br>
+                            <b>高度:</b> 34.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、揮發性有機物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b085366897b12150b47a2f38d1561032 = L.circleMarker(
+                [24.21309, 120.6191],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_b085366897b12150b47a2f38d1561032.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P012<br>
+                            <b>經度:</b> 120.61910<br>
+                            <b>緯度:</b> 24.21309<br>
+                            <b>高度:</b> 34.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e0d684215d526b6cd8da15f8d3d5307a = L.circleMarker(
+                [24.21256, 120.61883],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_e0d684215d526b6cd8da15f8d3d5307a.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P013<br>
+                            <b>經度:</b> 120.61883<br>
+                            <b>緯度:</b> 24.21256<br>
+                            <b>高度:</b> 39.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_640d4ad821be9d301f85a573b6705076 = L.circleMarker(
+                [24.21378, 120.61941],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_640d4ad821be9d301f85a573b6705076.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P014<br>
+                            <b>經度:</b> 120.61941<br>
+                            <b>緯度:</b> 24.21378<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_394f326eb1a13bbda8a799fcba2915dd = L.circleMarker(
+                [24.21369, 120.61936],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_394f326eb1a13bbda8a799fcba2915dd.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P015<br>
+                            <b>經度:</b> 120.61936<br>
+                            <b>緯度:</b> 24.21369<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8fade559703a5a917da5fdbfd830ed1f = L.circleMarker(
+                [24.21359, 120.61931],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_8fade559703a5a917da5fdbfd830ed1f.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P016<br>
+                            <b>經度:</b> 120.61931<br>
+                            <b>緯度:</b> 24.21359<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1e2722b15c7a8aedc31469791a3dd626 = L.circleMarker(
+                [24.214450000000003, 120.61968999999999],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_1e2722b15c7a8aedc31469791a3dd626.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P017<br>
+                            <b>經度:</b> 120.61969<br>
+                            <b>緯度:</b> 24.21445<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_fcd60cb334ff73a5b463789180a1c52b = L.circleMarker(
+                [24.214350000000003, 120.61965],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_fcd60cb334ff73a5b463789180a1c52b.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P018<br>
+                            <b>經度:</b> 120.61965<br>
+                            <b>緯度:</b> 24.21435<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0c77b2237095adb45d371bdd29ee2a88 = L.circleMarker(
+                [24.21425, 120.61961],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_0c77b2237095adb45d371bdd29ee2a88.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P019<br>
+                            <b>經度:</b> 120.61961<br>
+                            <b>緯度:</b> 24.21425<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_f99bb53575e598757f81f885feb1d2ef = L.circleMarker(
+                [24.21416, 120.61957],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_f99bb53575e598757f81f885feb1d2ef.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P020<br>
+                            <b>經度:</b> 120.61957<br>
+                            <b>緯度:</b> 24.21416<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ade5d2fdcb473d1736206aaf6e895115 = L.circleMarker(
+                [24.214070000000003, 120.61953],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_ade5d2fdcb473d1736206aaf6e895115.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P021<br>
+                            <b>經度:</b> 120.61953<br>
+                            <b>緯度:</b> 24.21407<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_c45fb90eaf0d548a9a1e63804f54e428 = L.circleMarker(
+                [24.2135, 120.61926],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_c45fb90eaf0d548a9a1e63804f54e428.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P022<br>
+                            <b>經度:</b> 120.61926<br>
+                            <b>緯度:</b> 24.21350<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、揮發性有機物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0ed2a051755e926058248080d9162aaa = L.circleMarker(
+                [24.2134, 120.61923],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_0ed2a051755e926058248080d9162aaa.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P023<br>
+                            <b>經度:</b> 120.61923<br>
+                            <b>緯度:</b> 24.21340<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_399dff78d97dba2a355f6e583982b452 = L.circleMarker(
+                [24.21331, 120.61919],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_399dff78d97dba2a355f6e583982b452.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P024<br>
+                            <b>經度:</b> 120.61919<br>
+                            <b>緯度:</b> 24.21331<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、揮發性有機物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_54993bdd5eade6012160033791a4d578 = L.circleMarker(
+                [24.21397, 120.61949],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_54993bdd5eade6012160033791a4d578.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P025<br>
+                            <b>經度:</b> 120.61949<br>
+                            <b>緯度:</b> 24.21397<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_17fc6140c262b8e715bad7340cfeef99 = L.circleMarker(
+                [24.21388, 120.61945],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_17fc6140c262b8e715bad7340cfeef99.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P026<br>
+                            <b>經度:</b> 120.61945<br>
+                            <b>緯度:</b> 24.21388<br>
+                            <b>高度:</b> 40.8 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_fc43195634f0f180e2acbb02caf974e0 = L.circleMarker(
+                [24.214820000000003, 120.61984],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_fc43195634f0f180e2acbb02caf974e0.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P027<br>
+                            <b>經度:</b> 120.61984<br>
+                            <b>緯度:</b> 24.21482<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_e9dfea2848ebbe2777b649f13c78953e = L.circleMarker(
+                [24.21477, 120.61982],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_e9dfea2848ebbe2777b649f13c78953e.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P028<br>
+                            <b>經度:</b> 120.61982<br>
+                            <b>緯度:</b> 24.21477<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0a438edb24cc501a0e11b2d12ecc2211 = L.circleMarker(
+                [24.21471, 120.6198],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_0a438edb24cc501a0e11b2d12ecc2211.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P029<br>
+                            <b>經度:</b> 120.61980<br>
+                            <b>緯度:</b> 24.21471<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_21bd2b56ff1b2dac5960e3297d4562c3 = L.circleMarker(
+                [24.21516, 120.61997],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_21bd2b56ff1b2dac5960e3297d4562c3.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P030<br>
+                            <b>經度:</b> 120.61997<br>
+                            <b>緯度:</b> 24.21516<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1d58fa9e268262bfd4fec7ba7d2896c8 = L.circleMarker(
+                [24.21509, 120.61994],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_1d58fa9e268262bfd4fec7ba7d2896c8.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P031<br>
+                            <b>經度:</b> 120.61994<br>
+                            <b>緯度:</b> 24.21509<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_783ed3c211481bd4e313040222ad885b = L.circleMarker(
+                [24.215040000000002, 120.61992],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_783ed3c211481bd4e313040222ad885b.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P032<br>
+                            <b>經度:</b> 120.61992<br>
+                            <b>緯度:</b> 24.21504<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_877b5a60404022ff241795debdd6ffcb = L.circleMarker(
+                [24.21498, 120.6199],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_877b5a60404022ff241795debdd6ffcb.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P033<br>
+                            <b>經度:</b> 120.61990<br>
+                            <b>緯度:</b> 24.21498<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_5f32a9a089ecb61527b83476607ad6e6 = L.circleMarker(
+                [24.214930000000003, 120.61988],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_5f32a9a089ecb61527b83476607ad6e6.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P034<br>
+                            <b>經度:</b> 120.61988<br>
+                            <b>緯度:</b> 24.21493<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_835b8dfbf7cd6f462a2802870bc7029f = L.circleMarker(
+                [24.21321, 120.61914999999999],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_835b8dfbf7cd6f462a2802870bc7029f.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P035<br>
+                            <b>經度:</b> 120.61915<br>
+                            <b>緯度:</b> 24.21321<br>
+                            <b>高度:</b> 41.3 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、揮發性有機物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2d72f70189308db0637d7a94acb08993 = L.circleMarker(
+                [24.21488, 120.61986],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_2d72f70189308db0637d7a94acb08993.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P036<br>
+                            <b>經度:</b> 120.61986<br>
+                            <b>緯度:</b> 24.21488<br>
+                            <b>高度:</b> 42.0 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氯、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_2733e7c2cfcffef652ff17e0c9808ed4 = L.polygon(
+                [[24.215315, 120.618859], [24.215848, 120.617244], [24.216352, 120.617512], [24.216802, 120.617523], [24.217071, 120.618001], [24.217643, 120.618403], [24.21759, 120.619433], [24.217232, 120.620109]],
+                {"bubblingMouseEvents": true, "color": "lightblue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "lightblue", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+        var popup_e5cbbb99c58b55b6c3b84b656978dba4 = L.popup({
+  "maxWidth": 300,
+  "className": "draggable-popup",
+  "autoClose": false,
+  "closeOnClick": false,
+});
+
+        
+            
+                var html_62cdce7c864892ee00317c16d900709e = $(`<div id="html_62cdce7c864892ee00317c16d900709e" style="width: 100.0%; height: 100.0%;">     <div style="font-family: Arial, sans-serif; font-size: 14px; width: 250px; background-color: transparent;">         <div class='drag-header' style='cursor: move; margin-bottom: 5px; border-bottom: 2px solid #3498db; padding-bottom: 3px;'>             <h4 style="margin: 0; color: #333;">📍 台灣日東光學股份有限公司(中科) <span style='font-size:10px;color:#666;'>(廠區)</span></h4>         </div>         <b>列管煙道數量:</b> <span style="color: #c0392b;">8</span><br>         <b>原料與排放化學物質:</b>         <div style="margin-top: 5px; font-size: 13px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 4px; word-wrap: break-word;">             1,3-双(N,N-二缩水甘油氨甲基)環己烷、2-甲基-2-丙烯酸2-(2-異氰酸乙氧)乙酯、B0801H糊、丙烯酸、丙烯酸2-羥乙基酯、丙烯酸丁酯、丙烯酸乙酯、丙烯酸樹脂溶液(E-OAC)、丙烯酸異辛酯、丙烯酸羥乙酯、丙烯醯嗎啉、乙酸乙酯、二月桂酸二丁錫、偶氮二異丁腈、光引發劑(Omnirad127D)、光引發劑(Omnirad651)、固化劑(SC-75LT)、固化劑(TMP3A)、導電性塗層劑(W-245)、工業油漆(C0618)、工業用塗料(PD-837M)、揮發性有機物、有機矽烷(E0802)、氨酯樹脂(含溶劑)(C0803)、氫氟酸、氫氧化鈉、氮氧化物、氯化氫、水性交聯劑(WS700)、混和溶劑(E0102)、添加劑(E0005)、添加劑(S145)、甲基丙烯酸甲酯、甲基丙烯酸異氰酸基乙酯、甲基乙基酮、甲基異丁酮、甲苯、異丙醇、矽烷封端聚酯(SAT10)、硅烷偶聯劑(E0101)、硝酸、硫氧化物、硫酸、硬化劑(M321-)、磷酸、穩定劑(BT120-)、穩定劑(Irganox1010)、第三丁醇、粒狀汙染物、聚合物添加劑(T115)、聚對苯二甲酸二乙酯、聚氨酯樹脂(D101A)、聚胺基甲酸酯樹脂、膠黏劑(NTK-2)、膠黏劑(TN-300)、膠黏劑(TN-400)、著色劑(AT DN 101)、過氧化二苯甲醯、黏著劑(A0805)         </div>     </div>     </div>`)[0];
+                popup_e5cbbb99c58b55b6c3b84b656978dba4.setContent(html_62cdce7c864892ee00317c16d900709e);
+            
+        
+
+        polygon_2733e7c2cfcffef652ff17e0c9808ed4.bindPopup(popup_e5cbbb99c58b55b6c3b84b656978dba4)
+        ;
+
+        
+    
+    
+            polygon_2733e7c2cfcffef652ff17e0c9808ed4.bindTooltip(
+                `<div>
+                     台灣日東光學股份有限公司(中科)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_3e5ea9d6068f8eb941f1bdf02595facf = L.circleMarker(
+                [24.216968, 120.618532],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_3e5ea9d6068f8eb941f1bdf02595facf.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P001<br>
+                            <b>經度:</b> 120.61853<br>
+                            <b>緯度:</b> 24.21697<br>
+                            <b>高度:</b> 25.7 m<br>
+                            <b>排放物質:</b> 甲苯、氯化氫、硫酸、硝酸、氫氟酸、粒狀汙染物、揮發性有機物、氮氧化物、硫氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_fbbe17e9c9fc529e647fd409e2a68dcb = L.circleMarker(
+                [24.21723, 120.61862],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_fbbe17e9c9fc529e647fd409e2a68dcb.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P004<br>
+                            <b>經度:</b> 120.61862<br>
+                            <b>緯度:</b> 24.21723<br>
+                            <b>高度:</b> 31.2 m<br>
+                            <b>排放物質:</b> 甲苯、氯化氫、硫酸、硝酸、氫氟酸、粒狀汙染物、揮發性有機物、氮氧化物、硫氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_eafb572e0e734b40fbffcbd700d2ef00 = L.circleMarker(
+                [24.217006, 120.619142],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_eafb572e0e734b40fbffcbd700d2ef00.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P005<br>
+                            <b>經度:</b> 120.61914<br>
+                            <b>緯度:</b> 24.21701<br>
+                            <b>高度:</b> 20.1 m<br>
+                            <b>排放物質:</b> 甲苯、氯化氫、硫酸、硝酸、氫氟酸、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_751d84991f7953b36b2bc971639e428a = L.circleMarker(
+                [24.217042, 120.618985],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_751d84991f7953b36b2bc971639e428a.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P006<br>
+                            <b>經度:</b> 120.61898<br>
+                            <b>緯度:</b> 24.21704<br>
+                            <b>高度:</b> 20.1 m<br>
+                            <b>排放物質:</b> 甲苯、氯化氫、硫酸、硝酸、磷酸、氫氟酸、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_bdd85bb1d6376493217b64791cb14401 = L.circleMarker(
+                [24.216426, 120.618091],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_bdd85bb1d6376493217b64791cb14401.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P007<br>
+                            <b>經度:</b> 120.61809<br>
+                            <b>緯度:</b> 24.21643<br>
+                            <b>高度:</b> 23.0 m<br>
+                            <b>排放物質:</b> 甲苯、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a9d4856e097862c3099269fc95d6b338 = L.circleMarker(
+                [24.217103, 120.618108],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_a9d4856e097862c3099269fc95d6b338.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P003<br>
+                            <b>經度:</b> 120.61811<br>
+                            <b>緯度:</b> 24.21710<br>
+                            <b>高度:</b> 12.5 m<br>
+                            <b>排放物質:</b> 甲苯、氯化氫、硫酸、硝酸、氫氟酸、粒狀汙染物、氮氧化物、硫氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_743f3a89289de2fac983352e0f9169a4 = L.circleMarker(
+                [24.217112, 120.618108],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_743f3a89289de2fac983352e0f9169a4.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P201<br>
+                            <b>經度:</b> 120.61811<br>
+                            <b>緯度:</b> 24.21711<br>
+                            <b>高度:</b> 12.5 m<br>
+                            <b>排放物質:</b> 甲苯、氯化氫、硫酸、硝酸、氫氟酸、粒狀汙染物、氮氧化物、硫氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0980ade6368ed65aaf426b2cb3d5fe83 = L.circleMarker(
+                [24.217021, 120.618079],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_0980ade6368ed65aaf426b2cb3d5fe83.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P202<br>
+                            <b>經度:</b> 120.61808<br>
+                            <b>緯度:</b> 24.21702<br>
+                            <b>高度:</b> 12.5 m<br>
+                            <b>排放物質:</b> 甲苯、氯化氫、硫酸、硝酸、氫氟酸、粒狀汙染物、氮氧化物、硫氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_ca5a50543ee660bf8848409019d2aa36 = L.polygon(
+                [[24.215956, 120.621037], [24.216552, 120.621418], [24.216988, 120.620431], [24.21642, 120.620061]],
+                {"bubblingMouseEvents": true, "color": "lightblue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "lightblue", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+        var popup_9fffc1390d8b960fdff01364d3858774 = L.popup({
+  "maxWidth": 300,
+  "className": "draggable-popup",
+  "autoClose": false,
+  "closeOnClick": false,
+});
+
+        
+            
+                var html_d2c4831bda01046751f41056b793514b = $(`<div id="html_d2c4831bda01046751f41056b793514b" style="width: 100.0%; height: 100.0%;">     <div style="font-family: Arial, sans-serif; font-size: 14px; width: 250px; background-color: transparent;">         <div class='drag-header' style='cursor: move; margin-bottom: 5px; border-bottom: 2px solid #3498db; padding-bottom: 3px;'>             <h4 style="margin: 0; color: #333;">📍 均豪精密工業股份有限公司(中科) <span style='font-size:10px;color:#666;'>(廠區)</span></h4>         </div>         <b>列管煙道數量:</b> <span style="color: #c0392b;">0</span><br>         <b>原料與排放化學物質:</b>         <div style="margin-top: 5px; font-size: 13px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 4px; word-wrap: break-word;">             無資料         </div>     </div>     </div>`)[0];
+                popup_9fffc1390d8b960fdff01364d3858774.setContent(html_d2c4831bda01046751f41056b793514b);
+            
+        
+
+        polygon_ca5a50543ee660bf8848409019d2aa36.bindPopup(popup_9fffc1390d8b960fdff01364d3858774)
+        ;
+
+        
+    
+    
+            polygon_ca5a50543ee660bf8848409019d2aa36.bindTooltip(
+                `<div>
+                     均豪精密工業股份有限公司(中科)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_f9cad06412059af6a2f716d9b42f0ceb = L.polygon(
+                [[24.215403, 120.622061], [24.215936, 120.621107], [24.216577, 120.621504], [24.217022, 120.620484], [24.217653, 120.620892], [24.216675, 120.622845]],
+                {"bubblingMouseEvents": true, "color": "lightblue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "lightblue", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+        var popup_5279020e7eb822dfa75c2b02bd41f6e3 = L.popup({
+  "maxWidth": 300,
+  "className": "draggable-popup",
+  "autoClose": false,
+  "closeOnClick": false,
+});
+
+        
+            
+                var html_0e7c85d9b92aca6b637e5a25220f7cff = $(`<div id="html_0e7c85d9b92aca6b637e5a25220f7cff" style="width: 100.0%; height: 100.0%;">     <div style="font-family: Arial, sans-serif; font-size: 14px; width: 250px; background-color: transparent;">         <div class='drag-header' style='cursor: move; margin-bottom: 5px; border-bottom: 2px solid #3498db; padding-bottom: 3px;'>             <h4 style="margin: 0; color: #333;">📍 永勝光學股份有限公司(中科) <span style='font-size:10px;color:#666;'>(廠區)</span></h4>         </div>         <b>列管煙道數量:</b> <span style="color: #c0392b;">8</span><br>         <b>原料與排放化學物質:</b>         <div style="margin-top: 5px; font-size: 13px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 4px; word-wrap: break-word;">             1,6-二異氰酸己烷、1-(3-二甲氨基丙基)-3-乙基碳二亞胺鹽酸鹽、2,3-二羥基甲基丙烯酸丙酯、2-羥基-4-(2-羥乙氧基)二苯甲酮-4-丙烯酸酯、N-乙烯基-2-吡咯烷酮、一水磷酸二氫鈉、三乙胺、三氯甲烷、丙三醇、乙二醇二甲基丙烯酸酯、乙腈、乙苯、乙醇、乳酸乙酯、二氯甲烷、二甲基甲醯胺、二苯胺、偶氮二異丁腈、吡啶、揮發性有機物、正十二硫醇、氮氧化物、氯化鈉、泊洛沙姆、活性藍、海藻糖、玻尿酸鈉、環戊酮、甲基丙烯酸、甲基丙烯酸十二烷基酯、甲基丙烯酸羥乙酯、甲醛、疊氮化鈉、硝酸鈉、碳酸鈉、磷酸三鈉、磷酸二氫鈉、粒狀汙染物、聚丙烯、聚丙烯酸、聚乙二醇、聚乙烯吡咯烷酮、聚六亞甲基胍鹽酸鹽、聚季銨鹽－51、過氧化苯甲醯、過氯酸鈉、鄰乙氧基苯酚         </div>     </div>     </div>`)[0];
+                popup_5279020e7eb822dfa75c2b02bd41f6e3.setContent(html_0e7c85d9b92aca6b637e5a25220f7cff);
+            
+        
+
+        polygon_f9cad06412059af6a2f716d9b42f0ceb.bindPopup(popup_5279020e7eb822dfa75c2b02bd41f6e3)
+        ;
+
+        
+    
+    
+            polygon_f9cad06412059af6a2f716d9b42f0ceb.bindTooltip(
+                `<div>
+                     永勝光學股份有限公司(中科)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_c431df041e938961251cfedb33265267 = L.circleMarker(
+                [24.216723, 120.621467],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_c431df041e938961251cfedb33265267.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P001<br>
+                            <b>經度:</b> 120.62147<br>
+                            <b>緯度:</b> 24.21672<br>
+                            <b>高度:</b> 20.5 m<br>
+                            <b>排放物質:</b> 二氯甲烷、氮氧化物、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d8d440bd42aaa91c587ffb4bf6212d4b = L.circleMarker(
+                [24.21703, 120.621357],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_d8d440bd42aaa91c587ffb4bf6212d4b.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P005<br>
+                            <b>經度:</b> 120.62136<br>
+                            <b>緯度:</b> 24.21703<br>
+                            <b>高度:</b> 12.0 m<br>
+                            <b>排放物質:</b> 二氯甲烷、氮氧化物、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a06c9510efa73a1d1014f3ea585fb136 = L.circleMarker(
+                [24.216092, 120.621981],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_a06c9510efa73a1d1014f3ea585fb136.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P101<br>
+                            <b>經度:</b> 120.62198<br>
+                            <b>緯度:</b> 24.21609<br>
+                            <b>高度:</b> 39.0 m<br>
+                            <b>排放物質:</b> 二氯甲烷、氮氧化物、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_ab804ba28b13e4cca069e4376fc6c9aa = L.circleMarker(
+                [24.21601, 120.621833],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_ab804ba28b13e4cca069e4376fc6c9aa.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P102<br>
+                            <b>經度:</b> 120.62183<br>
+                            <b>緯度:</b> 24.21601<br>
+                            <b>高度:</b> 16.0 m<br>
+                            <b>排放物質:</b> 二氯甲烷、氮氧化物、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_10fab874ce36030fdfb934dd5b697afc = L.circleMarker(
+                [24.216119, 120.621931],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_10fab874ce36030fdfb934dd5b697afc.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P103<br>
+                            <b>經度:</b> 120.62193<br>
+                            <b>緯度:</b> 24.21612<br>
+                            <b>高度:</b> 40.0 m<br>
+                            <b>排放物質:</b> 二氯甲烷、氮氧化物、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_9a756f7121d5e8dcb7522c9b0dd9551f = L.circleMarker(
+                [24.216119, 120.621921],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_9a756f7121d5e8dcb7522c9b0dd9551f.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P104<br>
+                            <b>經度:</b> 120.62192<br>
+                            <b>緯度:</b> 24.21612<br>
+                            <b>高度:</b> 40.0 m<br>
+                            <b>排放物質:</b> 二氯甲烷、氮氧化物、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b6fdef7a190ee95b40fe1cc832b58f0e = L.circleMarker(
+                [24.216092, 120.621931],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_b6fdef7a190ee95b40fe1cc832b58f0e.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P105<br>
+                            <b>經度:</b> 120.62193<br>
+                            <b>緯度:</b> 24.21609<br>
+                            <b>高度:</b> 40.0 m<br>
+                            <b>排放物質:</b> 二氯甲烷、氮氧化物、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_78d17353e61a31edc7204b793851e06d = L.circleMarker(
+                [24.216101, 120.621921],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_78d17353e61a31edc7204b793851e06d.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P106<br>
+                            <b>經度:</b> 120.62192<br>
+                            <b>緯度:</b> 24.21610<br>
+                            <b>高度:</b> 40.0 m<br>
+                            <b>排放物質:</b> 二氯甲烷、氮氧化物、粒狀汙染物、揮發性有機物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var polygon_5dc863aa28211d955f3e5a59d9b79299 = L.polygon(
+                [[24.216733, 120.622893], [24.217785, 120.623537], [24.218426, 120.622153], [24.218353, 120.621445], [24.218172, 120.62116], [24.217727, 120.62093]],
+                {"bubblingMouseEvents": true, "color": "lightblue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "lightblue", "fillOpacity": 0.5, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+        var popup_33a97c2129a572821bae077d378798ff = L.popup({
+  "maxWidth": 300,
+  "className": "draggable-popup",
+  "autoClose": false,
+  "closeOnClick": false,
+});
+
+        
+            
+                var html_ab30e8002268a1094dfa0b3226009a43 = $(`<div id="html_ab30e8002268a1094dfa0b3226009a43" style="width: 100.0%; height: 100.0%;">     <div style="font-family: Arial, sans-serif; font-size: 14px; width: 250px; background-color: transparent;">         <div class='drag-header' style='cursor: move; margin-bottom: 5px; border-bottom: 2px solid #3498db; padding-bottom: 3px;'>             <h4 style="margin: 0; color: #333;">📍 橋椿金屬股份有限公司(中科) <span style='font-size:10px;color:#666;'>(廠區)</span></h4>         </div>         <b>列管煙道數量:</b> <span style="color: #c0392b;">10</span><br>         <b>原料與排放化學物質:</b>         <div style="margin-top: 5px; font-size: 13px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 4px; word-wrap: break-word;">             三氧化鉻(鉻酸)、乙酸、揮發性有機物、氨、氫氟酸、氮氧化物、氯化氫、氰化亞銅、氰化鈉、甲醛、硝酸、硝酸鈉、硫酸、磷酸、粒狀汙染物、重鉻酸鉀、鉻(Cr)、鉻酸鉀、銅(Cu)、鋅(Zn)、鎳(Ni)         </div>     </div>     </div>`)[0];
+                popup_33a97c2129a572821bae077d378798ff.setContent(html_ab30e8002268a1094dfa0b3226009a43);
+            
+        
+
+        polygon_5dc863aa28211d955f3e5a59d9b79299.bindPopup(popup_33a97c2129a572821bae077d378798ff)
+        ;
+
+        
+    
+    
+            polygon_5dc863aa28211d955f3e5a59d9b79299.bindTooltip(
+                `<div>
+                     橋椿金屬股份有限公司(中科)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2dd2cd1e67a04f11bf2c9c061af49a19 = L.circleMarker(
+                [24.217438, 120.622095],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_2dd2cd1e67a04f11bf2c9c061af49a19.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P201<br>
+                            <b>經度:</b> 120.62210<br>
+                            <b>緯度:</b> 24.21744<br>
+                            <b>高度:</b> 27,46 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、粒狀汙染物、揮發性有機物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a1c4666093cd3aed80006d1b386514e8 = L.circleMarker(
+                [24.21761, 120.622468],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_a1c4666093cd3aed80006d1b386514e8.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P202<br>
+                            <b>經度:</b> 120.62247<br>
+                            <b>緯度:</b> 24.21761<br>
+                            <b>高度:</b> 25.6 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、乙酸、粒狀汙染物、揮發性有機物、氮氧化物、鉻(Cr)
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_01950a02da33579b8c87f4861bb7e6c4 = L.circleMarker(
+                [24.217474, 120.622173],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_01950a02da33579b8c87f4861bb7e6c4.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P203<br>
+                            <b>經度:</b> 120.62217<br>
+                            <b>緯度:</b> 24.21747<br>
+                            <b>高度:</b> 27.7 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、粒狀汙染物、揮發性有機物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8ebf5461a4e2821f46aa7774707081ef = L.circleMarker(
+                [24.217276, 120.62245],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_8ebf5461a4e2821f46aa7774707081ef.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P204<br>
+                            <b>經度:</b> 120.62245<br>
+                            <b>緯度:</b> 24.21728<br>
+                            <b>高度:</b> 24.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、氫氟酸、粒狀汙染物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d16432260e495210f818034b7ba95951 = L.circleMarker(
+                [24.217195, 120.622568],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_d16432260e495210f818034b7ba95951.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P205<br>
+                            <b>經度:</b> 120.62257<br>
+                            <b>緯度:</b> 24.21720<br>
+                            <b>高度:</b> 26.2 m<br>
+                            <b>排放物質:</b> 氯化氫、硫酸、硝酸、磷酸、氫氟酸、氨、乙酸、粒狀汙染物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_79fde453c3ae475cfa2433e41e84117c = L.circleMarker(
+                [24.217618, 120.622143],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_79fde453c3ae475cfa2433e41e84117c.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P206<br>
+                            <b>經度:</b> 120.62214<br>
+                            <b>緯度:</b> 24.21762<br>
+                            <b>高度:</b> 24.1 m<br>
+                            <b>排放物質:</b> 粒狀汙染物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_6f94d902687c687e275de4595aceb07b = L.circleMarker(
+                [24.21779, 120.622261],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_6f94d902687c687e275de4595aceb07b.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P207<br>
+                            <b>經度:</b> 120.62226<br>
+                            <b>緯度:</b> 24.21779<br>
+                            <b>高度:</b> 24.1 m<br>
+                            <b>排放物質:</b> 粒狀汙染物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_d3b4224ddeb5e6b16303b37a91a2f19b = L.circleMarker(
+                [24.218035, 120.622457],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_d3b4224ddeb5e6b16303b37a91a2f19b.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P208<br>
+                            <b>經度:</b> 120.62246<br>
+                            <b>緯度:</b> 24.21804<br>
+                            <b>高度:</b> 24.1 m<br>
+                            <b>排放物質:</b> 粒狀汙染物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_0364c8450e82ac13e72c35e5d0b96ba0 = L.circleMarker(
+                [24.217692, 120.622557],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_0364c8450e82ac13e72c35e5d0b96ba0.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P209<br>
+                            <b>經度:</b> 120.62256<br>
+                            <b>緯度:</b> 24.21769<br>
+                            <b>高度:</b> 24.1 m<br>
+                            <b>排放物質:</b> 粒狀汙染物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_2d12545ff6a1477e4679f8d0154a6b06 = L.circleMarker(
+                [24.217548, 120.622862],
+                {"bubblingMouseEvents": true, "color": "#2980b9", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#3498db", "fillOpacity": 1.0, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 2}
+            ).addTo(feature_group_c5b03106a3de03180a7e47930ab79afc);
+        
+    
+            circle_marker_2d12545ff6a1477e4679f8d0154a6b06.bindTooltip(
+                `<div>
+                     
+                        <div style="font-family: Arial; font-size: 13px; max-width: 250px; white-space: normal;">
+                            <b>煙道編號:</b> P210<br>
+                            <b>經度:</b> 120.62286<br>
+                            <b>緯度:</b> 24.21755<br>
+                            <b>高度:</b> 7.6 m<br>
+                            <b>排放物質:</b> 粒狀汙染物、揮發性有機物、氮氧化物
+                        </div>
+                        
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            feature_group_c5b03106a3de03180a7e47930ab79afc.addTo(map_76d1495276e05fec6c668e692234e9ee);
+        
+    
+            var feature_group_6d6d9f21228bec315dcc1b5f3d9d4228 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            feature_group_6d6d9f21228bec315dcc1b5f3d9d4228.addTo(map_76d1495276e05fec6c668e692234e9ee);
+        
+    
+            var feature_group_4c6125c311d1d6698546c0919cc27f5b = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_9228d5c0bdda8060d8b50299a762f6ae = L.marker(
+                [24.887787, 121.1883272],
+                {
+}
+            ).addTo(feature_group_4c6125c311d1d6698546c0919cc27f5b);
+        
+    
+            var icon_b7e53ec79835f4978be6ec9307cc6c64 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "caret-up",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_9228d5c0bdda8060d8b50299a762f6ae.bindTooltip(
+                `<div>
+                     竹科龍潭(環保中心)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9228d5c0bdda8060d8b50299a762f6ae.setIcon(icon_b7e53ec79835f4978be6ec9307cc6c64);
+            
+    
+            var marker_d2024105c8e0a67cb86218946fd6e865 = L.marker(
+                [24.882046, 121.195207],
+                {
+}
+            ).addTo(feature_group_4c6125c311d1d6698546c0919cc27f5b);
+        
+    
+            var icon_683bdfb4cd5c63f359a29997ae0e3ec4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "caret-up",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_d2024105c8e0a67cb86218946fd6e865.bindTooltip(
+                `<div>
+                     竹科德龍(德龍國小)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d2024105c8e0a67cb86218946fd6e865.setIcon(icon_683bdfb4cd5c63f359a29997ae0e3ec4);
+            
+    
+            var marker_2df40c6cff0ccd5d55b285a150a11998 = L.marker(
+                [24.889177, 121.201821],
+                {
+}
+            ).addTo(feature_group_4c6125c311d1d6698546c0919cc27f5b);
+        
+    
+            var icon_23beacab0405470cbfa0ec7495b045a6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "caret-up",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+            marker_2df40c6cff0ccd5d55b285a150a11998.bindTooltip(
+                `<div>
+                     竹科聖德(聖德里)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2df40c6cff0ccd5d55b285a150a11998.setIcon(icon_23beacab0405470cbfa0ec7495b045a6);
+            
+    
+            feature_group_4c6125c311d1d6698546c0919cc27f5b.addTo(map_76d1495276e05fec6c668e692234e9ee);
+        
+    
+            var feature_group_82f4f351191d425f56c2f2a1a6563a9f = L.featureGroup(
+                {
+}
+            );
+        
+    
+            feature_group_82f4f351191d425f56c2f2a1a6563a9f.addTo(map_76d1495276e05fec6c668e692234e9ee);
+        
+    
+            var layer_control_2e65bc87bd5a70928fbb30d77fe4b20c_layers = {
+                base_layers : {
+                    "OpenStreetMap" : tile_layer_90a66b9145b7910e10bb48db0e81162d,
+                    "Google Satellite" : tile_layer_b87155b06ac59e04d387126ec466a9f2,
+                },
+                overlays :  {
+                    "\u5ee0\u5340\u7bc4\u570d" : feature_group_ffe410c724b546400fc31f73584ccdf5,
+                    "\u9130\u8fd1\u516c\u53f8\u5ee0\u623f" : feature_group_c5b03106a3de03180a7e47930ab79afc,
+                    "\u74b0\u5883\u90e8\u6e2c\u7ad9" : feature_group_6d6d9f21228bec315dcc1b5f3d9d4228,
+                    "\u7279\u6b8a\u6027\u5de5\u696d\u5340\u6e2c\u7ad9" : feature_group_4c6125c311d1d6698546c0919cc27f5b,
+                    "\u6c23\u8c61\u7f72\u6e2c\u7ad9" : feature_group_82f4f351191d425f56c2f2a1a6563a9f,
+                },
+            };
+            let layer_control_2e65bc87bd5a70928fbb30d77fe4b20c = L.control.layers(
+                layer_control_2e65bc87bd5a70928fbb30d77fe4b20c_layers.base_layers,
+                layer_control_2e65bc87bd5a70928fbb30d77fe4b20c_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_76d1495276e05fec6c668e692234e9ee);
+
+        
+    
+            L.control.fullscreen(
+                {
+  "position": "topleft",
+  "title": "Full Screen",
+  "titleCancel": "Exit Full Screen",
+  "forceSeparateButton": false,
+}
+            ).addTo(map_76d1495276e05fec6c668e692234e9ee);
+        
+    
+            var mouse_position_51224f86c5ab992b2eda95d11a88000b = new L.Control.MousePosition(
+                {
+  "position": "bottomright",
+  "separator": " : ",
+  "emptyString": "Unavailable",
+  "lngFirst": false,
+  "numDigits": 5,
+  "prefix": "",
+}
+            );
+            mouse_position_51224f86c5ab992b2eda95d11a88000b.options["latFormatter"] =
+                undefined;
+            mouse_position_51224f86c5ab992b2eda95d11a88000b.options["lngFormatter"] =
+                undefined;
+            map_76d1495276e05fec6c668e692234e9ee.addControl(mouse_position_51224f86c5ab992b2eda95d11a88000b);
+        
+    
+            var measure_control_7b683990bd1ac82928ae5e85f5d4bb99 = new L.Control.Measure(
+                {
+  "position": "topleft",
+  "primaryLengthUnit": "kilometers",
+  "secondaryLengthUnit": "meters",
+  "primaryAreaUnit": "sqmeters",
+  "secondaryAreaUnit": "acres",
+  "activeColor": "red",
+  "completedColor": "red",
+});
+            map_76d1495276e05fec6c668e692234e9ee.addControl(measure_control_7b683990bd1ac82928ae5e85f5d4bb99);
+
+            // Workaround for using this plugin with Leaflet>=1.8.0
+            // https://github.com/ljagis/leaflet-measure/issues/171
+            L.Control.Measure.include({
+                _setCaptureMarkerIcon: function () {
+                    // disable autopan
+                    this._captureMarker.options.autoPanOnFocus = false;
+                    // default function
+                    this._captureMarker.setIcon(
+                        L.divIcon({
+                            iconSize: this._map.getSize().multiplyBy(2)
+                        })
+                    );
+                },
+            });
+
+        
+</script>
+</html>
